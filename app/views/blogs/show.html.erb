@@ -1,0 +1,67 @@
+<p id="notice"><%= notice %></p>
+<div class="container">
+  <div class="content">
+    <span class="float-right">
+      <%= link_to 'Edit', edit_blog_path(@blog), class: "btn btn-primary" %>
+      <%= link_to 'Delete', @blog, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
+    </span>
+    <h2><%= @blog.title %></h2>
+    <p>by <b><%= @blog.author.set_full_name %></b></p>
+    <hr>
+    <p>
+      <%= raw @blog.body %>
+    </p>
+    <p>Blog Shared so far:<%= @blog.shared_blog_count %></p>
+    <div id="showCount"></div>
+    <button type="button" class="btn btn-dark float-right" data-toggle="modal" data-target="#shareModal" onclick="getURL();">Share</button><span class="clearfix"></span>
+    <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="shareModalLabel">Share this blog post</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="input-group mb-3">
+              <input class="form-control" readonly value="https://share.it/b/9rgiXdySNsW3ggfthaKQCg" id = "url_value"/>
+              <div class="input-group-append">
+                <button onclick="CountFun()" class="btn btn-success float-right" id="first" >Copy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  function getURL() {
+    return window.location.href;
+  }
+  document.getElementById("url_value").value = getURL();
+
+  var cnt=0;
+  function CountFun(){
+    cnt=parseInt(cnt)+parseInt(1);
+    var copyText = document.getElementById("url_value");
+    copyText.select();
+    document.execCommand("copy");
+    $('#shareModal').modal('hide');
+    alert("URL copied: " + copyText.value);    
+  }
+  $('#first').click(function(e) {
+    e.preventDefault();
+  $.ajax({
+      type: "PUT",
+      url: "<%= blog_share_count_path(@blog) %>"
+    });
+  });
+</script>
+
+
+
